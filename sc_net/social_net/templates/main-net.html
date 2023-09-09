@@ -16,7 +16,9 @@ Main page.
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
         <div class="accordion-body">
-          <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+          Эта страница - главная на сайте социальной сети. Создал её, неудивительно, <a href="#">Nizier193</a> - основной разработчик соцсети. 
+          Здесь вы можете наблюдать контент похожий главной странице фейсбука или около того. Новости и объявления будут размещены здесь в соответствии 
+          с вашими подписками и рекомендациями.  
         </div>
       </div>
     </div>
@@ -41,8 +43,8 @@ Main page.
 <ul style="list-style-type: none;">
 {% for announce in announcements %}
     <li>
-        <div class="card" style="width: 45%;">
-            <img src="{{announce.picture}}" class="img-fluid" alt="...">
+        <div class="card" style="width: 45%; float: right; margin-right: 3.5%; margin-top: 2%;">
+            <img src="{{announce.picture.0}}" class="img-fluid" alt="...">
             <div class="card-body">
             <h5 class="card-title">{{announce.title}}</h5>
             <p class="card-text">{{announce.message}}</p>
@@ -50,6 +52,7 @@ Main page.
                 <span>{{announce.created_at}}</span>
             </div>
             <a href="#" class="btn btn-primary">{{announce.person}}</a>
+            <p> index ----> {{announce.pk}}</p>
 
             </div>
         </div>

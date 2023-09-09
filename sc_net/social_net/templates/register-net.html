@@ -33,4 +33,28 @@
 
 {% block content %}
 <h1 style="text-align: center;">Страница для <span style="color:aqua;">регистрации</span> на сайте.</h1>
+
+<div class="m-5 w-25 p-3" style="background-color: gainsboro;">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.as_p}}
+
+    <div class="row mb-3">
+      <div class="col">
+        <button type="submit" class="btn btn-success">Принять</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% if error %}
+{% for err in error %}
+<div style="max-width: 35%;">
+  <div class="alert alert-danger m-2" role="alert">
+    {{err}}
+  </div>
+</div>
+
+{% endfor %}
+{% endif %}
+
 {% endblock %}

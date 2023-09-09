@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="{% static 'js/slides.js' %}"></script>
+
     <title>
         {% block title %}
             Some title.
@@ -25,26 +27,63 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'profile-page-net' %}">Профиль</a>
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Профиль
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'profile-page-net' username=user.username %}">Ваша страница</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile-page-net' username=user.username %}">Редактирование</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'profile-page-net' username=user.username %}">Настройки</a></li>
+                    </ul>
                 </li>
+                {% else %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Профиль
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><span class="dropdown-item">Вам необходимо <a href="{% url 'register-page-net' %}">зарегистрироваться</a>, <br>прежде чем оставлять предложения.</span></li>
+                    </ul>
+                </li>
+                {% endif %}
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Действия
                     </a>
                     <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="{% url 'register-page-net' %}">Регистрация</a></li>
-                    <li><a class="dropdown-item" href="{% url 'login-page-net' %}">Логин</a></li>
+                    {% if not user.is_authenticated %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'login-page-net' %}">Логин</a></li>
+                    {% else %}
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#" id="link___">Выйти</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout-page-net' %}" id="link___">Выйти</a></li>
+                    {% endif %}
                     </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" aria-disabled="true">#</a>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Предложения
+                    </a>
+                    <ul class="dropdown-menu">
+                    {% if user.is_authenticated %}
+                    <li><a class="dropdown-item" href="{% url 'suggestion-page-net' %}">Оставить предложение</a></li>
+                    <li><a class="dropdown-item" href="{% url 'suggestion-watch-page-net' %}">Недавние предложения</a></li>
+                    {% else %}
+                        <li><span class="dropdown-item">Вам необходимо <a href="{% url 'register-page-net' %}">зарегистрироваться</a>, <br>прежде чем оставлять предложения.</span></li>
+                    {% endif %}
+                    </ul>
+                </li>
                 </ul>
                 <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
+                <input name="search" class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Поиск</button>
                 </form>
             </div>

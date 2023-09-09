@@ -1,35 +1,61 @@
-from django.shortcuts import render
+from django.contrib.auth import logout
+from django.shortcuts import render, redirect
+from django.urls import reverse
+
+from .forms import *
 from .models import *
 
+def search_profile(requests):
+    username = requests.GET.get('search')
+    if username:
+        return redirect(reverse('profile-page-net', kwargs={'username':username}))
 def main_page(requests):
-    announcements = Announcement.objects.all().order_by("-id")[:2][::-1]
-    profile = Person.objects.all().get(id=1)
-    return render(requests, 'main-net.html', {'profile':profile, 'announcements':announcements})
+    redirect = search_profile(requests)
+    if redirect: return redirect
+    return render(requests, 'main-net.html')
 
-def profile_page(requests):
-    profile = Person.objects.all().get(id=1)
-    announcements = Announcement.objects.all().filter(person=profile.username).order_by("-id")[:2][::-1]
+def profile_page(requests, username):
+    redirect = search_profile(requests)
+    if redirect: return redirect
 
-    friends = [Person.objects.all().get(username=friend) for friend in profile.friends]
-    picture_main = profile.image[0]
-    try:
-        pictures = profile.image[1:]
-        return render(requests, 'profile-net.html', {'profile':profile,
-                                                     'announcements':announcements,
-                                                     'profile_pic':picture_main,
-                                                     'pictures':pictures,
-                                                     'friends':friends
-                                                     })
-    except Exception:
-        return render(requests, 'profile-net.html', {'profile':profile,
-                                                     'announcements':announcements,
-                                                     'profile_pic':picture_main,
-                                                     'pictures':[],
-                                                     'friends':friends
-                                                     })
+    profile = Person.objects.get(user=User.objects.get(username=username))
+    context = {
+        'profile':profile,
+    }
+    return render(requests, 'profile-net.html', context)
+
+def suggestion_page(requests):
+    redirect = search_profile(requests)
+    if redirect: return redirect
+
+    return render(requests, 'suggestion-net.html')
+
+def suggestion_watch_page(requests):
+    redirect = search_profile(requests)
+    if redirect: return redirect
+
+    return render(requests, 'suggestion-watch-net.html')
 
 def register_page(requests):
-    return render(requests, 'register-net.html')
+    redirect = search_profile(requests)
+    if redirect: return redirect
 
-def login_page(requests):
-    return render(requests, 'login-net.html')
+    if requests.method == 'POST':
+        form = CustomUserCreationForm(requests.POST, requests.FILES)
+        if form.is_valid():
+            form.save()
+
+        else:
+            errors = [error for err in form.errors for error in form.errors[err]]
+            form = CustomUserCreationForm()
+            context = {
+                'error': errors,
+                'form': form,
+            }
+            return render(requests, 'register-net.html', context=context)
+
+    context = {
+        'error':None,
+        'form':CustomUserCreationForm(),
+    }
+    return render(requests, 'register-net.html', context=context)
